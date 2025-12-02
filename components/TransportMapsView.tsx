@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { TRANSPORT_MAPS_DATA } from '../constants';
-import { ChevronDown, ChevronUp, ExternalLink, Map, } from 'lucide-react';
+import { ChevronDown, ChevronUp, ExternalLink, Map, ZoomIn, X } from 'lucide-react';
 
 const TransportMapsView: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -73,20 +74,27 @@ const TransportMapsView: React.FC = () => {
 
                     {/* Map Preview Card */}
                     <div className="bg-white p-2 rounded-xl border border-gray-200 shadow-sm mb-4">
-                        <div className="w-full h-48 overflow-hidden rounded-lg relative bg-gray-100 flex items-center justify-center">
+                        <div 
+                            className="w-full h-48 overflow-hidden rounded-lg relative bg-gray-100 flex items-center justify-center group/map cursor-zoom-in"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setZoomedImage(item.mapUrl);
+                            }}
+                        >
                             <img 
                                 src={item.mapUrl} 
                                 alt={`${item.name} Route Map`}
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-contain transition-transform duration-500 group-hover/map:scale-105"
                             />
-                            <a 
-                                href={item.mapUrl} 
-                                target="_blank"
-                                rel="noreferrer"
-                                className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm hover:bg-black transition"
+                            <div className="absolute inset-0 bg-black/0 group-hover/map:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover/map:opacity-100">
+                                <ZoomIn size={24} className="text-white drop-shadow-md" />
+                            </div>
+                            <button 
+                                className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2.5 py-1.5 rounded-lg backdrop-blur-sm hover:bg-black transition flex items-center gap-1.5 font-bold"
                             >
+                                <ZoomIn size={12} />
                                 放大圖片
-                            </a>
+                            </button>
                         </div>
                     </div>
 
@@ -114,6 +122,35 @@ const TransportMapsView: React.FC = () => {
             * 圖片來源自維基百科或公共領域資源，僅供參考。詳細時刻表與票價請以各鐵路公司官方網站為準。
         </p>
       </div>
+
+      {/* Full Screen Image Modal */}
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fadeScale"
+          onClick={() => setZoomedImage(null)}
+        >
+          {/* Close Button */}
+          <button 
+            className="absolute top-6 right-6 text-white/80 hover:text-white p-3 rounded-full bg-white/10 backdrop-blur-md transition-colors shadow-lg z-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              setZoomedImage(null);
+            }}
+          >
+            <X size={24} />
+          </button>
+
+          {/* Image Container */}
+          <div className="w-full h-full flex items-center justify-center p-2">
+            <img 
+              src={zoomedImage}
+              alt="Zoomed Map"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
