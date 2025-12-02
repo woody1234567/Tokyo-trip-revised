@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { TRANSPORT_MAPS_DATA } from '../constants';
-import { ChevronDown, ChevronUp, ExternalLink, Map } from 'lucide-react';
+import { ChevronDown, ChevronUp, ExternalLink, Map, } from 'lucide-react';
 
 const TransportMapsView: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);

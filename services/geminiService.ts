@@ -29,3 +29,39 @@ export const fetchLocationDetails = async (location: string): Promise<string> =>
     return "Could not fetch AI insights at this time.";
   }
 };
+
+export const fetchWeather = async (location: string): Promise<string> => {
+  const ai = getAiClient();
+  if (!ai) {
+    console.warn("No API Key found for Gemini.");
+    return "";
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `Get the current weather and next 5 days forecast for ${location}. 
+      Strictly return plain text data with NO markdown formatting.
+      
+      Output Format:
+      CURRENT|Temp(int)|Condition|Humidity|Wind
+      FORECAST|Date(MM/DD)|Day(in Traditional Chinese, e.g. 週一)|Condition|High(int)|Low(int)
+      (Repeat FORECAST line for 5 days)
+
+      Rules:
+      1. Condition MUST be mapped to exactly one of: Sunny, Cloudy, Rain. 
+         (Map 'Partly Cloudy'->Cloudy, 'Clear'->Sunny, 'Snow'->Rain, 'Showers'->Rain)
+      2. Temp should be just the number (e.g. 15).
+      3. Humidity example: 45%
+      4. Wind example: 3m/s
+      `,
+      config: {
+        tools: [{googleSearch: {}}],
+      },
+    });
+    return response.text || "";
+  } catch (error) {
+    console.error("Gemini Weather API Error:", error);
+    return "";
+  }
+};

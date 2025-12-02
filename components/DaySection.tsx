@@ -59,7 +59,7 @@ const DaySection: React.FC<DaySectionProps> = ({ day, isExpanded, onToggle }) =>
         </div>
       </div>
 
-      <div className={`transition-all duration-500 ease-out overflow-hidden ${isExpanded ? 'opacity-100 max-h-[3000px] mt-2' : 'opacity-0 max-h-0'}`}>
+      <div className={`transition-all duration-500 ease-out overflow-hidden ${isExpanded ? 'opacity-100 mt-2' : 'opacity-0 max-h-0'}`}>
         <div className="pl-2 pr-2 pt-2">
             {day.items.map((item, index) => (
                 <ActivityItem 

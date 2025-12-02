@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FLIGHTS, ACCOMMODATIONS } from '../constants';
-import { Plane, Building, Phone, AlertTriangle, Plus, Trash2, Calculator, Coins, Save } from 'lucide-react';
+import { Plane, Building, Phone, AlertTriangle, Plus, Trash2, Calculator, Coins, Check, X, Pencil } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import TransportMapsView from './TransportMapsView';
 
@@ -22,14 +22,21 @@ const DEFAULT_EXPENSES: ExpenseItem[] = [
 
 const COLORS = ['#E06A6A', '#5B6C8C', '#8A9A5B', '#F0AAB8', '#E6C229'];
 
-const UtilitiesView: React.FC = () => {
-    const [viewMode, setViewMode] = useState<'info' | 'wallet' | 'maps'>('info');
+interface UtilitiesViewProps {
+    viewMode: 'info' | 'wallet' | 'maps';
+}
 
+const UtilitiesView: React.FC<UtilitiesViewProps> = ({ viewMode }) => {
     // --- Wallet State ---
     const [expenses, setExpenses] = useState<ExpenseItem[]>(DEFAULT_EXPENSES);
     const [newItemName, setNewItemName] = useState('');
     const [newItemAmount, setNewItemAmount] = useState('');
     const [newItemCategory, setNewItemCategory] = useState('餐飲');
+
+    // --- Editing State ---
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editName, setEditName] = useState('');
+    const [editAmount, setEditAmount] = useState('');
     
     // --- Currency Converter State ---
     const [jpyAmount, setJpyAmount] = useState('');
@@ -52,6 +59,31 @@ const UtilitiesView: React.FC = () => {
         setExpenses(expenses.filter(e => e.id !== id));
     };
 
+    const handleStartEdit = (item: ExpenseItem) => {
+        setEditingId(item.id);
+        setEditName(item.name);
+        setEditAmount(item.amount.toString());
+    };
+
+    const handleSaveEdit = (id: string) => {
+        if (!editName || !editAmount) return;
+        
+        setExpenses(expenses.map(item => 
+            item.id === id 
+                ? { ...item, name: editName, amount: parseFloat(editAmount) }
+                : item
+        ));
+        setEditingId(null);
+        setEditName('');
+        setEditAmount('');
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setEditName('');
+        setEditAmount('');
+    };
+
     const getChartData = () => {
         const map = new Map<string, number>();
         expenses.forEach(e => {
@@ -67,8 +99,7 @@ const UtilitiesView: React.FC = () => {
     const totalBudget = expenses.reduce((sum, item) => sum + item.amount, 0);
 
     return (
-        <div className="pb-40 relative">
-            
+        <div className="pb-24 relative pt-4">
             <div className="px-4 space-y-6 animate-fadeScale">
                 
                 {viewMode === 'info' && (
@@ -273,26 +304,75 @@ const UtilitiesView: React.FC = () => {
 
                              {/* Expense List */}
                              <div className="space-y-2 max-h-60 overflow-y-auto no-scrollbar">
-                                 {expenses.map((item) => (
-                                     <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl group">
-                                         <div className="flex items-center gap-3">
-                                             <div className="w-1.5 h-8 rounded-full" style={{ backgroundColor: COLORS[Math.floor(Math.random() * COLORS.length)] }}></div>
-                                             <div>
-                                                 <p className="font-bold text-sm text-gray-700">{item.name}</p>
-                                                 <p className="text-[10px] text-gray-400">{item.category}</p>
-                                             </div>
+                                 {expenses.map((item) => {
+                                     const isEditing = editingId === item.id;
+                                     return (
+                                         <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl group transition-colors hover:bg-gray-100">
+                                             {isEditing ? (
+                                                 // Editing Mode
+                                                 <div className="flex items-center gap-2 w-full">
+                                                     <div className="flex-grow flex gap-2">
+                                                         <input 
+                                                             type="text" 
+                                                             value={editName}
+                                                             onChange={(e) => setEditName(e.target.value)}
+                                                             className="w-2/3 bg-white px-2 py-1 rounded-lg text-sm border border-indigo-200 outline-none"
+                                                             autoFocus
+                                                         />
+                                                         <input 
+                                                             type="number" 
+                                                             value={editAmount}
+                                                             onChange={(e) => setEditAmount(e.target.value)}
+                                                             className="w-1/3 bg-white px-2 py-1 rounded-lg text-sm border border-indigo-200 outline-none font-mono"
+                                                         />
+                                                     </div>
+                                                     <div className="flex gap-1">
+                                                         <button 
+                                                             onClick={() => handleSaveEdit(item.id)}
+                                                             className="bg-matcha-dark text-white p-1.5 rounded-lg hover:bg-[#7A8A4B]"
+                                                         >
+                                                             <Check size={14} />
+                                                         </button>
+                                                         <button 
+                                                             onClick={handleCancelEdit}
+                                                             className="bg-gray-300 text-white p-1.5 rounded-lg hover:bg-gray-400"
+                                                         >
+                                                             <X size={14} />
+                                                         </button>
+                                                     </div>
+                                                 </div>
+                                             ) : (
+                                                 // View Mode
+                                                 <>
+                                                     <div className="flex items-center gap-3">
+                                                         <div className="w-1.5 h-8 rounded-full" style={{ backgroundColor: COLORS[Math.floor(Math.random() * COLORS.length)] }}></div>
+                                                         <div>
+                                                             <p className="font-bold text-sm text-gray-700">{item.name}</p>
+                                                             <p className="text-[10px] text-gray-400">{item.category}</p>
+                                                         </div>
+                                                     </div>
+                                                     <div className="flex items-center gap-3">
+                                                         <span className="font-mono text-sm font-bold text-gray-600">¥{item.amount.toLocaleString()}</span>
+                                                         <div className="flex gap-1 opacity-50 group-hover:opacity-100 transition-opacity">
+                                                             <button 
+                                                                 onClick={() => handleStartEdit(item)}
+                                                                 className="text-gray-400 hover:text-indigo-japan p-1"
+                                                             >
+                                                                 <Pencil size={14} />
+                                                             </button>
+                                                             <button 
+                                                                 onClick={() => handleDeleteExpense(item.id)}
+                                                                 className="text-gray-400 hover:text-red-400 p-1"
+                                                             >
+                                                                 <Trash2 size={14} />
+                                                             </button>
+                                                         </div>
+                                                     </div>
+                                                 </>
+                                             )}
                                          </div>
-                                         <div className="flex items-center gap-3">
-                                             <span className="font-mono text-sm font-bold text-gray-600">¥{item.amount.toLocaleString()}</span>
-                                             <button 
-                                                onClick={() => handleDeleteExpense(item.id)}
-                                                className="text-gray-300 hover:text-red-400 transition-colors"
-                                             >
-                                                 <Trash2 size={14} />
-                                             </button>
-                                         </div>
-                                     </div>
-                                 ))}
+                                     );
+                                 })}
                              </div>
                         </section>
                     </>
@@ -301,28 +381,6 @@ const UtilitiesView: React.FC = () => {
                 {viewMode === 'maps' && (
                     <TransportMapsView />
                 )}
-            </div>
-
-            {/* Bottom Sub-Navigation (Fixed above main nav) */}
-            <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 bg-white/80 backdrop-blur-md p-1.5 rounded-full shadow-soft border border-white/50">
-                 <button 
-                    onClick={() => setViewMode('info')}
-                    className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${viewMode === 'info' ? 'bg-indigo-japan text-white shadow-md' : 'text-gray-500 hover:bg-white/50'}`}
-                >
-                    旅程資訊
-                </button>
-                <button 
-                    onClick={() => setViewMode('wallet')}
-                    className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${viewMode === 'wallet' ? 'bg-indigo-japan text-white shadow-md' : 'text-gray-500 hover:bg-white/50'}`}
-                >
-                    錢包 & 匯率
-                </button>
-                <button 
-                    onClick={() => setViewMode('maps')}
-                    className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${viewMode === 'maps' ? 'bg-indigo-japan text-white shadow-md' : 'text-gray-500 hover:bg-white/50'}`}
-                >
-                    交通地圖
-                </button>
             </div>
 
         </div>

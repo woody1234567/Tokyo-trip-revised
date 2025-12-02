@@ -3,24 +3,32 @@ import React, { useState } from 'react';
 import { ITINERARY_DATA } from './constants';
 import DaySection from './components/DaySection';
 import UtilitiesView from './components/UtilitiesView';
+import WeatherOverview from './components/WeatherOverview';
 import { Wallet, TentTree, AlignLeft } from 'lucide-react';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'itinerary' | 'utils'>('itinerary');
   const [expandedDay, setExpandedDay] = useState<string>('day1');
+  const [utilsViewMode, setUtilsViewMode] = useState<'info' | 'wallet' | 'maps'>('info');
 
   const toggleDay = (id: string) => {
     setExpandedDay(expandedDay === id ? '' : id);
   };
 
+  const switchToUtils = (mode: 'info' | 'wallet' | 'maps') => {
+    setUtilsViewMode(mode);
+    setActiveTab('utils');
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'utils':
-        return <UtilitiesView />;
+        return <UtilitiesView viewMode={utilsViewMode} />;
       case 'itinerary':
       default:
         return (
           <div className="pt-6 pb-24">
+            <WeatherOverview />
             {ITINERARY_DATA.map((day) => (
               <DaySection 
                 key={day.id} 
@@ -40,20 +48,47 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] pb-24 max-w-md mx-auto relative shadow-2xl overflow-hidden font-sans text-japan-black">
+    <div className="min-h-screen bg-[#F9F7F2] pb-6 max-w-md mx-auto relative shadow-2xl overflow-hidden font-sans text-japan-black">
       
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between border-b border-gray-100/50">
+      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 px-4 py-4 flex items-center justify-between border-b border-gray-100/50 h-[4.5rem]">
         <div>
-           <h1 className="text-2xl font-black tracking-tighter text-indigo-japan flex items-center gap-2">
+           <h1 className="text-lg font-black tracking-tighter text-indigo-japan flex items-center gap-1">
              <span>TOKYO</span>
-             <span className="text-japan-red text-sm">●</span>
+             <span className="text-japan-red text-xs">●</span>
              <span>FUJI</span>
            </h1>
-           <p className="text-[10px] text-gray-400 font-bold tracking-[0.25em] uppercase mt-1">Travel Companion</p>
+           <p className="text-[8px] text-gray-400 font-bold tracking-[0.25em] uppercase mt-0.5">Travel Companion</p>
         </div>
-        <div className="w-10 h-10 rounded-2xl bg-sakura/30 flex items-center justify-center text-japan-red shadow-inner-soft border border-white">
-            <TentTree size={20} />
+        
+        {/* Header Right Action: Integrated Navigation */}
+        <div className="flex items-center">
+            <div className="flex gap-1 bg-gray-100/50 p-1 rounded-xl">
+                <button 
+                    onClick={() => setActiveTab('itinerary')}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === 'itinerary' ? 'bg-indigo-japan text-white shadow-sm' : 'text-gray-400 hover:bg-white hover:text-gray-500'}`}
+                >
+                    行程
+                </button>
+                <button 
+                    onClick={() => switchToUtils('info')}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === 'utils' && utilsViewMode === 'info' ? 'bg-indigo-japan text-white shadow-sm' : 'text-gray-400 hover:bg-white hover:text-gray-500'}`}
+                >
+                    資訊
+                </button>
+                <button 
+                    onClick={() => switchToUtils('wallet')}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === 'utils' && utilsViewMode === 'wallet' ? 'bg-indigo-japan text-white shadow-sm' : 'text-gray-400 hover:bg-white hover:text-gray-500'}`}
+                >
+                    錢包
+                </button>
+                <button 
+                    onClick={() => switchToUtils('maps')}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === 'utils' && utilsViewMode === 'maps' ? 'bg-indigo-japan text-white shadow-sm' : 'text-gray-400 hover:bg-white hover:text-gray-500'}`}
+                >
+                    地圖
+                </button>
+            </div>
         </div>
       </header>
 
@@ -61,26 +96,6 @@ const App: React.FC = () => {
       <main className="no-scrollbar overflow-y-auto h-full scroll-smooth">
         {renderContent()}
       </main>
-
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[70%] max-w-sm bg-white/95 backdrop-blur-xl border border-white/50 text-gray-400 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.08)] flex items-center justify-between p-2 z-50">
-         
-         <button 
-            onClick={() => setActiveTab('itinerary')}
-            className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-[1.5rem] transition-all duration-300 ${activeTab === 'itinerary' ? 'bg-indigo-50 text-indigo-japan' : 'hover:bg-gray-50 hover:text-gray-600'}`}
-         >
-            <AlignLeft size={20} strokeWidth={activeTab === 'itinerary' ? 2.5 : 2} />
-            <span className="text-[9px] font-bold uppercase tracking-wider">每日行程</span>
-         </button>
-
-         <button 
-            onClick={() => setActiveTab('utils')}
-            className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-[1.5rem] transition-all duration-300 ${activeTab === 'utils' ? 'bg-indigo-50 text-indigo-japan' : 'hover:bg-gray-50 hover:text-gray-600'}`}
-         >
-            <Wallet size={20} strokeWidth={activeTab === 'utils' ? 2.5 : 2} />
-            <span className="text-[9px] font-bold uppercase tracking-wider">工具箱</span>
-         </button>
-      </nav>
 
     </div>
   );
