@@ -29,25 +29,25 @@ const App: React.FC = () => {
     >
       <button
         onClick={() => setActiveTab("itinerary")}
-        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "itinerary" ? "bg-indigo-japan text-white shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
+        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "itinerary" ? "bg-indigo-japan text-black shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
       >
         行程
       </button>
       <button
         onClick={() => switchToUtils("info")}
-        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "utils" && utilsViewMode === "info" ? "bg-indigo-japan text-white shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
+        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "utils" && utilsViewMode === "info" ? "bg-indigo-japan text-black shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
       >
         資訊
       </button>
       <button
         onClick={() => switchToUtils("wallet")}
-        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "utils" && utilsViewMode === "wallet" ? "bg-indigo-japan text-white shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
+        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "utils" && utilsViewMode === "wallet" ? "bg-indigo-japan text-black shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
       >
         錢包
       </button>
       <button
         onClick={() => switchToUtils("maps")}
-        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "utils" && utilsViewMode === "maps" ? "bg-indigo-japan text-white shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
+        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all duration-300 ${activeTab === "utils" && utilsViewMode === "maps" ? "bg-indigo-japan text-black shadow-sm" : "text-gray-400 hover:bg-white hover:text-gray-500"} ${vertical ? "text-sm py-3 px-4" : ""}`}
       >
         地圖
       </button>

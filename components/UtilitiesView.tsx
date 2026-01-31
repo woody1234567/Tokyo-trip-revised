@@ -179,9 +179,9 @@ const UtilitiesView: React.FC<UtilitiesViewProps> = ({ viewMode }) => {
                   {ACCOMMODATIONS.map((hotel, idx) => (
                     <div
                       key={idx}
-                      className="bg-white p-5 rounded-3xl shadow-soft border border-white h-full flex flex-col"
+                      className="bg-white p-5 rounded-3xl shadow-soft border border-white flex flex-col"
                     >
-                      <div className="flex items-start gap-3 flex-grow">
+                      <div className="flex items-start gap-3">
                         <div className="p-2 bg-indigo-50 text-indigo-japan rounded-xl mt-1">
                           <Building size={18} />
                         </div>
@@ -281,13 +281,13 @@ const UtilitiesView: React.FC<UtilitiesViewProps> = ({ viewMode }) => {
                       placeholder="輸入日幣金額"
                       className="bg-transparent text-xl font-bold text-japan-black outline-none w-full placeholder-gray-300"
                     />
-                    <span className="text-xs font-bold text-gray-400 ml-2">
+                    <span className="text-xs font-bold text-black ml-2">
                       JPY
                     </span>
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <div className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-bold text-gray-500 flex items-center gap-2">
+                    <div className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-bold text-black flex items-center gap-2">
                       匯率:
                       <input
                         type="number"
@@ -300,7 +300,7 @@ const UtilitiesView: React.FC<UtilitiesViewProps> = ({ viewMode }) => {
                     </div>
                   </div>
 
-                  <div className="bg-indigo-japan p-4 rounded-2xl flex items-center justify-between text-white shadow-lg shadow-indigo-200">
+                  <div className="bg-indigo-japan p-4 rounded-2xl flex items-center justify-between text-black shadow-lg shadow-indigo-200">
                     <span className="text-2xl font-bold">
                       {jpyAmount
                         ? Math.round(
